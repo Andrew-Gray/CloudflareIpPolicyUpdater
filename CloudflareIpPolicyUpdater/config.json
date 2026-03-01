@@ -1,0 +1,15 @@
+{
+  "Cloudflare": {
+    "ApiToken": "",
+    "AccountId": "",
+    "PolicyId": ""
+  },
+  "Gmail": {
+    "Email": "",
+    "AppPassword": ""
+  },
+  "General": {
+    "NetworkAdapterName": "",
+    "IpLogFile": ""
+  }
+}
