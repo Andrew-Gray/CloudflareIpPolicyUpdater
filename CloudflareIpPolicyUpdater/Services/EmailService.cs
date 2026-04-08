@@ -2,6 +2,7 @@
 using MailKit.Net.Smtp;
 using MailKit.Security;
 using MimeKit;
+using System.Net;
 using System.Text;
 
 namespace CloudflareIpPolicyUpdater.Services;
@@ -34,8 +35,10 @@ public class EmailService(string gmailEmail, string gmailAppPassword)
     private static string FormatIpChangeMessage(IpAddresses oldIpAddresses, IpAddresses newIpAddresses)
     {
         var updatedRowStyles = "style='background-color: #d24b4b; color: #fff; font-weight: bold;'";
-        var isLocalIpChanged = !oldIpAddresses.LocalIp.Equals(newIpAddresses.LocalIp) ? updatedRowStyles : "";
-        var isPublicIpChanged = !oldIpAddresses.PublicIp.Equals(newIpAddresses.PublicIp) ? updatedRowStyles : "";
+        var isLocalIpChanged = !oldIpAddresses.LocalIpV4.Equals(newIpAddresses.LocalIpV4) ? updatedRowStyles : "";
+        var isPublicIpChanged = !oldIpAddresses.PublicIpV4.Equals(newIpAddresses.PublicIpV4) ? updatedRowStyles : "";
+        var isLocalIpV6Changed = !oldIpAddresses.LocalIpV6.Equals(newIpAddresses.LocalIpV6) ? updatedRowStyles : "";
+        var isPublicIpV6Changed = !oldIpAddresses.PublicIpV6.Equals(newIpAddresses.PublicIpV6) ? updatedRowStyles : "";
 
         var sb = new StringBuilder();
 
@@ -50,15 +53,34 @@ public class EmailService(string gmailEmail, string gmailAppPassword)
         sb.Append("</thead>");
         sb.Append("<tbody>");
         sb.Append($"<tr {isLocalIpChanged}>");
-        sb.Append("<td style='padding: 10px; border: 1px solid #ddd;'>Local</td>");
-        sb.Append($"<td style='padding: 10px; border: 1px solid #ddd;'>{oldIpAddresses.LocalIp}</td>");
-        sb.Append($"<td style='padding: 10px; border: 1px solid #ddd;'>{newIpAddresses.LocalIp}</td>");
+        sb.Append("<td style='padding: 10px; border: 1px solid #ddd;'>Local IPv4</td>");
+        sb.Append($"<td style='padding: 10px; border: 1px solid #ddd;'>{IpService.FormatIpString(oldIpAddresses.LocalIpV4)}</td>");
+        sb.Append($"<td style='padding: 10px; border: 1px solid #ddd;'>{newIpAddresses.LocalIpV4}</td>");
         sb.Append("</tr>");
         sb.Append($"<tr {isPublicIpChanged}>");
-        sb.Append("<td style='padding: 10px; border: 1px solid #ddd;'>Public</td>");
-        sb.Append($"<td style='padding: 10px; border: 1px solid #ddd;'>{oldIpAddresses.PublicIp}</td>");
-        sb.Append($"<td style='padding: 10px; border: 1px solid #ddd;'>{newIpAddresses.PublicIp}</td>");
+        sb.Append("<td style='padding: 10px; border: 1px solid #ddd;'>Public IPv4</td>");
+        sb.Append($"<td style='padding: 10px; border: 1px solid #ddd;'>{IpService.FormatIpString(oldIpAddresses.PublicIpV4)}</td>");
+        sb.Append($"<td style='padding: 10px; border: 1px solid #ddd;'>{newIpAddresses.PublicIpV4}</td>");
         sb.Append("</tr>");
+
+        if (newIpAddresses.LocalIpV6 != IPAddress.None)
+        {
+            sb.Append($"<tr {isLocalIpV6Changed}>");
+            sb.Append("<td style='padding: 10px; border: 1px solid #ddd;'>Local IPv6</td>");
+            sb.Append($"<td style='padding: 10px; border: 1px solid #ddd;'>{IpService.FormatIpString(oldIpAddresses.LocalIpV6)}</td>");
+            sb.Append($"<td style='padding: 10px; border: 1px solid #ddd;'>{newIpAddresses.LocalIpV6}</td>");
+            sb.Append("</tr>");
+        }
+
+        if (newIpAddresses.PublicIpV6 != IPAddress.None)
+        {
+            sb.Append($"<tr {isPublicIpV6Changed}>");
+            sb.Append("<td style='padding: 10px; border: 1px solid #ddd;'>Public IPv6</td>");
+            sb.Append($"<td style='padding: 10px; border: 1px solid #ddd;'>{IpService.FormatIpString(oldIpAddresses.PublicIpV6)}</td>");
+            sb.Append($"<td style='padding: 10px; border: 1px solid #ddd;'>{newIpAddresses.PublicIpV6}</td>");
+            sb.Append("</tr>");
+        }
+
         sb.Append("</tbody>");
         sb.Append("</table>");
 

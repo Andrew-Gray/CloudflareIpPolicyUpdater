@@ -6,8 +6,10 @@ namespace CloudflareIpPolicyUpdater.Services;
 public class FileService(string ipLogFile)
 {
     private readonly string _ipLogFile = ipLogFile;
-    private const string _publicIpKey = "PublicIP";
-    private const string _localIpKey = "LocalIP";
+    private const string _publicIpv4Key = "PublicIPv4";
+    private const string _localIpv4Key = "LocalV4IPv4";
+    private const string _publicIpv6Key = "PublicIPv6";
+    private const string _localIpv6Key = "LocalIPv6";
 
 
     public async Task<IpAddresses?> ReadPublicIpFromFile()
@@ -30,11 +32,17 @@ public class FileService(string ipLogFile)
 
             switch (key)
             {
-                case _publicIpKey:
-                    entry.PublicIp = IPAddress.Parse(value);
+                case _publicIpv4Key:
+                    entry.PublicIpV4 = IPAddress.Parse(value);
                     break;
-                case _localIpKey:
-                    entry.LocalIp = IPAddress.Parse(value);
+                case _localIpv4Key:
+                    entry.LocalIpV4 = IPAddress.Parse(value);
+                    break;
+                case _publicIpv6Key:
+                    entry.PublicIpV6 = IPAddress.Parse(value);
+                    break;
+                case _localIpv6Key:
+                    entry.LocalIpV6 = IPAddress.Parse(value);
                     break;
             }
         }
@@ -43,7 +51,7 @@ public class FileService(string ipLogFile)
 
     public async Task WriteToFile(IpAddresses ipAddresses)
     {
-        string logEntry = $"{_publicIpKey}:{ipAddresses.PublicIp}\n{_localIpKey}:{ipAddresses.LocalIp}";
+        string logEntry = $"{_publicIpv4Key}:{ipAddresses.PublicIpV4}\n{_localIpv4Key}:{ipAddresses.LocalIpV4}\n{_publicIpv6Key}:{ipAddresses.PublicIpV6}\n{_localIpv6Key}:{ipAddresses.LocalIpV6}";
         await File.WriteAllTextAsync(_ipLogFile, logEntry);
     }
 }

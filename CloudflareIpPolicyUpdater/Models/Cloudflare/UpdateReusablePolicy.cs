@@ -5,11 +5,20 @@ namespace CloudflareIpPolicyUpdater.Models.Cloudflare;
 
 public class UpdateReusablePolicy
 {
-    public UpdateReusablePolicy(AccessReusablePolicy policy, IPAddress ipAddress)
+    public UpdateReusablePolicy(AccessReusablePolicy policy, IPAddress ipAddressV4, IPAddress? ipAddressV6 = null)
     {
         Name = policy.Name;
         Decision = policy.Decision.StringValue();
-        Include = [new { ip = new { ip = ipAddress.ToString() } }];
+
+        Include = [];
+        if (ipAddressV4 != IPAddress.None)
+        {
+            Include.Add(new { ip = new { ip = ipAddressV4.ToString() } });
+        }
+        if (ipAddressV6 is not null && ipAddressV6 != IPAddress.None)
+        {
+            Include.Add(new { ip = new { ip = ipAddressV6.ToString() } });
+        }
     }
 
     [JsonPropertyName("name")]

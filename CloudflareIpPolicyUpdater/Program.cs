@@ -22,11 +22,7 @@ try
     var newIpAddresses = await ipService.GetIpsAsync();
 
     await fileService.WriteToFile(newIpAddresses);
-    if (
-        oldIpAddresses is not null
-        && oldIpAddresses.PublicIp.Equals(newIpAddresses.PublicIp)
-        && oldIpAddresses.LocalIp.Equals(newIpAddresses.LocalIp)
-    )
+    if (oldIpAddresses is not null && oldIpAddresses.Equals(newIpAddresses))
     {
         Console.WriteLine("IP has not changed. No update needed.");
         return;
@@ -35,7 +31,7 @@ try
     var emailService = new EmailService(gmailConfig.Email, gmailConfig.AppPassword);
     await emailService.SendEmail(oldIpAddresses ?? new IpAddresses(), newIpAddresses);
 
-    if (oldIpAddresses is not null && oldIpAddresses.PublicIp.Equals(newIpAddresses.PublicIp))
+    if (oldIpAddresses is not null && oldIpAddresses.PublicIpEquals(newIpAddresses))
     {
         Console.WriteLine("Public IP has not changed. No update needed.");
         return;
@@ -51,7 +47,7 @@ try
         return;
     }
 
-    bool updateSuccess = await cloudflareService.UpdateReusablePolicyAsync(newIpAddresses.PublicIp, policy);
+    bool updateSuccess = await cloudflareService.UpdateReusablePolicyAsync(newIpAddresses.PublicIpV4, newIpAddresses.PublicIpV6, policy);
     if (!updateSuccess)
     {
         Console.WriteLine("Failed to update Cloudflare policy.");
@@ -61,3 +57,5 @@ catch (Exception ex)
 {
     Console.WriteLine($"An error occurred: {ex.Message}");
 }
+
+

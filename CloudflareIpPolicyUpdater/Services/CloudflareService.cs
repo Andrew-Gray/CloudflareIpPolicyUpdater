@@ -32,11 +32,11 @@ public class CloudflareService(string apiToken, string accountId, string policyI
         return result?.Result;
     }
 
-    public async Task<bool> UpdateReusablePolicyAsync(IPAddress ipAddress, AccessReusablePolicy policy)
+    public async Task<bool> UpdateReusablePolicyAsync(IPAddress ipAddressV4, IPAddress? ipAddressV6, AccessReusablePolicy policy)
     {
         var url = $"{_cloudflareBaseUrl}/accounts/{_accountId}/access/policies/{_policyId}";
 
-        var updatedPolicy = new UpdateReusablePolicy(policy, ipAddress);
+        var updatedPolicy = new UpdateReusablePolicy(policy, ipAddressV4, ipAddressV6);
         var jsonPayload = JsonSerializer.Serialize(updatedPolicy);
 
         var request = BuildRequest(HttpMethod.Put, url, jsonPayload);
