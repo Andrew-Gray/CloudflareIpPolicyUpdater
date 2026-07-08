@@ -47,7 +47,7 @@ try
         return;
     }
 
-    bool updateSuccess = await cloudflareService.UpdateReusablePolicyAsync(newIpAddresses.PublicIpV4, newIpAddresses.PublicIpV6, policy);
+    bool updateSuccess = await cloudflareService.UpdateReusablePolicyAsync(newIpAddresses.PublicIpV4, newIpAddresses.PublicIpV6, policy, cloudflareConfig.Ipv6PrefixLength, string.IsNullOrWhiteSpace(cloudflareConfig.Country) ? null : cloudflareConfig.Country);
     if (!updateSuccess)
     {
         Console.WriteLine("Failed to update Cloudflare policy.");
