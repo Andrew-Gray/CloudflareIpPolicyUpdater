@@ -2,7 +2,9 @@
   "Cloudflare": {
     "ApiToken": "",
     "AccountId": "",
-    "PolicyId": ""
+    "PolicyId": "",
+    "Country": "",
+    "Ipv6PrefixLength": ""
   },
   "Gmail": {
     "Email": "",
