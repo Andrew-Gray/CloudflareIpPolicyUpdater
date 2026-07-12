@@ -92,6 +92,16 @@ cd publish
 
 Copy `config.json` into the publish directory before running the published executable. The project file also copies an existing `config.json` to the output directory during build and publish.
 
+## Update the application version
+
+Set `$Version` near the top of `Update-Version.ps1`, then run the script from the repository root to update both `FileVersion` and `AssemblyVersion`:
+
+```powershell
+.\Update-Version.ps1
+```
+
+The version must contain three or four numeric components. Use `-WhatIf` to preview the change without writing it, or pass `-ProjectPath` to target a different project file.
+
 ## Policy behavior
 
 The updater preserves the existing policy's name and decision, but replaces its `include` rules with the detected public IPv4 address and, when available, the public IPv6 address or configured IPv6 network. If `Cloudflare.Country` is set, it also replaces the policy's `require` rules with that country requirement.
