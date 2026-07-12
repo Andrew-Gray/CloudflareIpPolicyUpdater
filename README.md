@@ -1,4 +1,4 @@
-# Cloudflare IP Policy Updater
+# Cloudflare Policy Updater
 
 A small .NET console application that keeps a [Cloudflare Access reusable policy](https://developers.cloudflare.com/cloudflare-one/policies/access/) synchronized with the current public IP addresses of the machine on which it runs.
 
